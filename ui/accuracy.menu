@@ -1,0 +1,27 @@
+/* 
+Quake Live Mariano_hud | July 2010 http://www.quakelive.com/#profile/summary/Mariano
+*/
+
+#include "ui/menudef.h"
+
+//	ACCURACY
+
+menuDef {
+		name "Accuracy"
+		fullScreen MENU_FALSE
+		visible MENU_TRUE
+		rect 609 475 95 26
+		
+  		itemDef {
+			name "medal_accuracy"
+			ownerdraw CG_SELECTED_PLYR_ACCURACY
+			decoration
+			visible 1
+			style 1
+			visible MENU_TRUE
+			forecolor 1 1 1 .1
+			textstyle 2
+			textscale 0.25
+
+		}  
+}

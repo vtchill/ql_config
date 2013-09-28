@@ -1,0 +1,46 @@
+#include "ui/menudef.h"
+
+// Crosshair
+menuDef {
+    name "xhair"
+    rect 320 240 32 32
+    fullScreen MENU_FALSE
+    visible MENU_TRUE
+	
+	itemDef {
+		name "vertical-top"
+//		rect 0 -3.125 0.625 2.5
+		rect 0 -3.125 0.625 2.5
+		visible 1
+		style 1
+		decoration
+		backcolor 0 1 0 1
+		}
+	itemDef {
+		name "vertical-bottom"
+//		rect 0 1.25 0.625 2.5
+		rect 0 1.25 0.625 2.5
+		visible 1
+		style 1
+		decoration
+		backcolor 0 1 0 1
+		}
+	itemDef {
+		name "horizontal-left"
+//		rect -3.125 0 2.5 0.625
+		rect -3.145 0 2.5 0.625
+		visible 1
+		style 1
+		decoration
+		backcolor 0 1 0 1
+		}
+	itemDef {
+		name "horizontal-right"
+//		rect 1.25 0 2.5 0.625
+		rect 1.05 0 2.5 0.625
+		visible 1
+		style 1
+		decoration
+		backcolor 0 1 0 1
+		}
+}

@@ -1,0 +1,845 @@
+#include "ui/menudef.h"
+
+/*
+
+Modified Stermy/EmSixTeen HUD
+
+*/
+
+#define	DEFAULTS_ITEM	decoration visible 1
+#define	DEFAULTS_MENU	visible 1
+
+#define	vitalsBIG	1
+#define	vitalsSMALL	0.4
+
+#define	COLOUR_RED 	1	0	0
+#define	COLOUR_BLUE 	0	0	1
+#define	COLOUR_TEAM 	0.4	0.4 0.4
+#define	COLOUR_ENEMY	0	1	0
+			
+#define	COLOUR_CRITICAL	1	0	0	// Red
+#define	COLOUR_LOW	0.8	0.5	0	// Gold
+#define	COLOUR_HEALTHY	1	1	1	// White
+#define	COLOUR_STACKED	0.37	0.8	1	// Light blue
+
+#define	LEFTALIGN	textalign ITEM_ALIGN_LEFT
+#define	CENTERALIGN	textalign ITEM_ALIGN_CENTER
+#define	RIGHTALIGN	textalign ITEM_ALIGN_RIGHT
+
+#define	NORMALTEXT	textstyle 0
+#define	DROPSHADOWTEXT	textstyle 3
+#define	HEAVYSHADOWTEXT	textstyle 6
+
+// Notification AREA	
+
+menuDef {
+	DEFAULTS_MENU
+	name "msgsArea"
+	rect 470 4 64 36
+
+	itemdef {
+		DEFAULTS_ITEM
+		name tourneyMsg
+		rect 0 0 32 32
+		style 1
+		background "sprites/foe2.png"
+		ownerdrawflag CG_SHOW_IF_NOTICE_PRESENT
+		backcolor 1 1 1 1.0
+	}
+
+	itemdef {
+		DEFAULTS_ITEM
+		name ChatMsg
+		rect 34 0 32 32
+		style 1
+		background "sprites/balloon4.png"
+		ownerdrawflag CG_SHOW_IF_MSG_PRESENT
+		backcolor 1 1 1 1.0
+	}
+}
+
+// * LOTS OF SETTINGS HERE OH YES BABY :( * //
+
+// Everything is from the top left in a
+// 640x480 grid from there to the bottom right
+
+// ********** PLAYER VITALS //
+
+menuDef {
+	DEFAULTS_MENU
+    	rect 0 0 640 480
+	
+// ********** HEALTH //
+
+// Health icon
+
+	itemDef {
+		DEFAULTS_ITEM
+	     	rect 296 444 22 22
+		backcolor 0 0 0 0.8
+		style 1
+		background "ui/assets/hud/health.tga"
+	}
+	
+	itemDef {
+	     	DEFAULTS_ITEM
+		rect 295 443 22 22
+		ownerdraw CG_TEAM_COLORIZED
+		style 1
+		background "ui/assets/hud/health.tga"
+	}
+
+// Health value 
+
+	// Should be right aligned, but game code needs fixed
+	itemDef {
+		DEFAULTS_ITEM
+		rect 210 450 63 22
+		ownerdraw CG_PLAYER_HEALTH
+		HEAVYSHADOWTEXT
+		RIGHTALIGN
+		textscale vitalsBIG
+		forecolor COLOUR_STACKED 1			// COLOUR_STACKED when >150
+		addColorRange -999 30 COLOUR_CRITICAL 1	// COLOUR_CRITICAL from -999 to 30 (30 = max quad PJ dmg)
+		addColorRange 31 80 COLOUR_LOW 1		// COLOUR_LOW from 31 to 80 (80 = rg dmg)
+		addColorRange 81 150 COLOUR_HEALTHY 1	// COLOUR_HEALTHY from 81 to 150
+	}
+	
+// ********** ARMOUR //
+
+// Armour icon
+
+	itemDef {	
+		DEFAULTS_ITEM
+		rect 324 444 24 22
+	     	backcolor 0 0 0 0.8
+		style 1
+		background "ui/assets/hud/armor.tga"
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 323 443 24 22
+		ownerdraw CG_TEAM_COLORIZED
+		style 1
+		background "ui/assets/hud/armor.tga"
+	}
+	
+// Armour value
+
+	// Should be left aligned, but game code needs fixed
+	itemDef {
+		DEFAULTS_ITEM
+		rect 370 450 63 22
+		ownerdraw CG_PLAYER_ARMOR_VALUE
+		HEAVYSHADOWTEXT
+		LEFTALIGN
+		textscale 1
+		forecolor COLOUR_STACKED 1			// COLOUR_STACKED when >150
+		addColorRange -999 0 1 1 1 0		// Hidden when 0 or less
+		addColorRange 1 30 COLOUR_CRITICAL 1	// COLOUR_CRITICAL from 1 to 30
+	   	addColorRange 31 80 COLOUR_LOW 1		// COLOUR_LOW from 31 to 80
+		addColorRange 81 150 COLOUR_HEALTHY	1	// COLOUR_HEALTHY from 81 to 150
+	}
+	
+// ********** AMMO //
+
+	itemDef {
+		name "Ammo icon"
+		DEFAULTS_ITEM
+		rect 314 380 12 12
+		ownerdraw CG_PLAYER_AMMO_ICON2D		// CG_PLAYER_AMMO_ICON for 3D icon
+	}
+
+	itemDef {
+		name "Ammo value"
+		DEFAULTS_ITEM
+	 	rect 290 400 62 12
+		DROPSHADOWTEXT
+		CENTERALIGN
+		textscale vitalsSMALL
+		forecolor COLOUR_HEALTHY 1
+		ownerdraw CG_PLAYER_AMMO_VALUE
+		addColorRange -999 5 COLOUR_CRITICAL 1	// COLOUR_CRITICAL when 5 ammo or lower
+		}
+}
+
+// ** CTF ** //
+	
+// Flag
+menuDef {
+	name "ctfflag"
+	DEFAULTS_MENU
+	rect	215 5 35 35
+
+	itemDef {
+		DEFAULTS_ITEM
+		name	"flag"
+		rect	0 0 35 35
+		style	1
+		ownerdraw CG_PLAYER_HASFLAG 
+	}
+}
+
+// Medkit etc
+
+menuDef {
+	DEFAULTS_MENU
+	rect 0 260 40 40
+	
+	itemDef {
+	DEFAULTS_ITEM
+      	name "playeritem"
+	rect 0 0 25 25
+	ownerdraw CG_PLAYER_ITEM  
+	}
+}
+// ** TIMER ** //
+
+// ** TIMER ** //
+
+// Should change places depending on solo/team gametype, to avoid the team overlay
+
+menuDef	{
+	name "teamclock"
+	fullScreen MENU_FALSE
+	//visible MENU_TRUE
+	visible MENU_FALSE
+	ownerdrawflag CG_SHOW_ANYTEAMGAME
+	rect 200 70 122 36
+
+	itemDef {
+		DEFAULTS_ITEM
+		name		"background"
+		rect		-10  -41 146 46
+		backcolor	0 0.5 1 0.4
+		style		1
+	}
+		
+	itemDef {
+		DEFAULTS_ITEM
+		name 		"teamtimer"
+		textalign 	2
+		style 		0
+		rect 		0 0 50 15
+		textstyle 	3
+		forecolor 	1 1 1 1
+		textscale 	1
+		ownerdraw CG_LEVELTIMER
+	}
+}
+
+menuDef	{
+	name "soloclock"
+	fullScreen MENU_FALSE
+	//visible MENU_TRUE
+	visible MENU_FALSE
+	ownerdrawflag CG_SHOW_ANYNONTEAMGAME
+	rect 295 60 122 36
+	
+	itemDef {
+		DEFAULTS_ITEM
+		name		"background"
+		rect		-10  -41 146 46
+		//rect		-20 -32 152 36
+		backcolor	0 0.5 1 0.4
+		style		1
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		name		"solotimer"
+		textalign	2
+		style		0
+		rect		0 0 50 15
+		textstyle	3
+		forecolor	1 1 1 1
+		textscale	1
+		ownerdraw	CG_LEVELTIMER
+	}
+
+
+}
+
+/*
+// Credit goes to noctis for the timer code, I just edited it.
+
+menuDef {
+	name       "timerFrame"
+	rect       280 35 157 46
+	fullScreen MENU_FALSE
+	visible    MENU_TRUE
+
+	itemDef {
+		name      "timerfg"
+		decoration
+		rect      -20 -30 122 36
+		visible   1
+		backcolor 0 0.5 1 0.4
+		style     1
+	}
+	itemDef {
+		DEFAULTS_ITEM
+		name       "Timer"
+		textalign  1
+		style      0
+		rect       6 1 84 20
+		textstyle  3
+		forecolor  1 1 1 1
+		textscale  0.75
+		ownerdraw  CG_LEVELTIMER
+	}
+	itemDef {
+		DEFAULTS_ITEM
+		name       "roundTimer"
+		textalign  0
+		style      0
+		rect       6 1 84 20
+		textstyle  3
+		forecolor  1 1 1 1
+		textscale  0.6
+		ownerdraw  CG_ROUNDTIMER
+	}
+}
+*/
+
+// Mini timer to sit below the cg_drawItemPickups message - the cvar is disabled @ LAN so this eases the habit
+menuDef	{
+	DEFAULTS_MENU
+
+	itemDef {
+		DEFAULTS_ITEM
+		name "timer-mini"
+		textalign 2
+		style 0
+		rect 1 390 50 15
+		visible 1
+		textstyle 3
+		decoration
+		forecolor 1 1 1 1
+		textscale .275
+		ownerdraw CG_LEVELTIMER
+	}
+}
+
+// ** Top left score box ** //
+
+menuDef {
+    	name "ScoreFrame"
+    	fullScreen MENU_FALSE
+    	visible MENU_TRUE	
+    	rect 2 0 32 256
+
+// Gametype Icon
+
+	itemDef {
+		name "gameType"
+		rect 6 7 19 19
+		style 0
+		backcolor 1 1 1 1
+		ownerdraw CG_GAME_TYPE_ICON
+		visible 1
+		decoration
+	}	
+
+// Win value
+
+	itemDef {
+      		name "WinLimit"
+      		textalign 1
+        	rect 7 37 40 12
+		visible 1
+    		decoration
+		forecolor 0 0 0 1
+		textscale .26
+		ownerdraw CG_CAPFRAGLIMIT 
+	}
+	
+}
+
+
+// RED TEAM BAR TOP
+menuDef {
+    	name "RedFrameTeam"
+    	fullScreen MENU_FALSE
+    	visible MENU_TRUE	
+    	rect 2 7 32 256
+    	ownerdrawflag CG_SHOW_IF_RED_IS_FIRST_PLACE// AND CG_SHOW_ANYNONTEAMGAME
+	//red team flag alert - align to right
+	itemDef {
+     	name "TeamRLeft"
+	rect 31 0 128 16 
+	visible 1
+   	decoration
+	backcolor 1 0 0 0.3
+	style 1
+	background "ui/assets/hud/rteambgl.tga"
+	ownerdrawflag CG_SHOW_RED_TEAM_HAS_BLUEFLAG
+	}
+	//red team flag alert - align to right
+	itemDef {
+     	name "TeamRLeft"
+	rect 51 0 128 16 
+	visible 1
+   	decoration
+	backcolor 1 0 0 0.3
+	style 1
+	background "ui/assets/hud/rteambgr.tga"
+	ownerdrawflag CG_SHOW_RED_TEAM_HAS_BLUEFLAG
+	}
+	//red team info
+	
+	//clan arena count
+	itemDef {
+		name "clanArena"
+		rect 33 2 21 11
+		visible 1
+		backcolor 1 1 1 1
+		decoration	
+		style 1
+		ownerdrawflag CG_SHOW_CLAN_ARENA
+		background "ui/assets/score/ca_score_red.tga"
+	}
+    	itemdef {
+	    name "redClanPlayers"
+	    ownerdrawflag CG_SHOW_CLAN_ARENA
+	    ownerdraw CG_RED_CLAN_PLYRS  
+   	    rect 45 11 136 40
+   	    visible 1
+	    textscale .18
+	    forecolor 1 1 1 0.65
+	    decoration
+	}
+	itemDef {
+		name "f"
+		rect 36 1 13 13
+		visible 1
+		decoration
+		ownerdrawflag CG_SHOW_CTF                       
+		ownerdraw CG_RED_FLAGSTATUS
+	}
+}
+// RED TEAM BAR BOTTOM
+menuDef {
+    	name "RedFrameTeam"
+    	fullScreen MENU_FALSE
+    	visible MENU_TRUE	
+    	rect 2 24 32 256
+    	ownerdrawflag CG_SHOW_IF_BLUE_IS_FIRST_PLACE// AND CG_SHOW_ANYNONTEAMGAME
+	//red team flag alert - align to right
+	itemDef {
+     	name "TeamRLeft"
+	rect 31 0 128 16 
+	visible 1
+   	decoration
+	backcolor 1 0 0 0.3
+	style 1
+	background "ui/assets/hud/rteambgl.tga"
+	ownerdrawflag CG_SHOW_RED_TEAM_HAS_BLUEFLAG
+	}
+	//red team flag alert - align to right
+	itemDef {
+     	name "TeamRLeft"
+	rect 51 0 128 16 
+	visible 1
+   	decoration
+	backcolor 1 0 0 0.3
+	style 1
+	background "ui/assets/hud/rteambgr.tga"
+	ownerdrawflag CG_SHOW_RED_TEAM_HAS_BLUEFLAG
+	}
+	//red team info
+	
+	//clan arena count
+	itemDef {
+		name "clanArena"
+		rect 33 2 21 11
+		visible 1
+		backcolor 1 1 1 1
+		decoration	
+		style 1
+	    ownerdrawflag CG_SHOW_CLAN_ARENA
+		background "ui/assets/score/ca_score_red.tga"
+	}
+    	itemdef {
+	    name "redClanPlayers"
+	    ownerdrawflag CG_SHOW_CLAN_ARENA
+	    ownerdraw CG_RED_CLAN_PLYRS  
+   	    rect 45 11 136 40
+   	    visible 1
+	    textscale .18
+	    forecolor 1 1 1 0.65
+	    decoration
+	}
+	itemDef {
+		name "f"
+		rect 36 1 13 13
+		visible 1
+		decoration
+		ownerdrawflag CG_SHOW_CTF                       
+		ownerdraw CG_RED_FLAGSTATUS
+	}
+}
+// BLUE TEAM BAR TOP
+menuDef {
+    	name "BlueFrameTeam"
+    	fullScreen MENU_FALSE
+    	visible MENU_TRUE	
+    	rect 2 7 32 256
+    	ownerdrawflag CG_SHOW_IF_BLUE_IS_FIRST_PLACE// AND CG_SHOW_ANYNONTEAMGAME
+	//blue team flag alert - align to left
+	itemDef {
+     	name "TeamBLeft"
+	rect 31 0 128 16 
+	visible 1
+   	decoration
+	backcolor 0.25 0.25 1 0.3
+	style 1
+	background "ui/assets/hud/bteambgl.tga"
+	ownerdrawflag CG_SHOW_BLUE_TEAM_HAS_REDFLAG
+	}
+	//blue team flag alert - align to right
+	itemDef {
+     	name "TeamBLeft"
+	rect 51 0 128 16 
+	visible 1
+   	decoration
+	backcolor 0.25 0.25 1 0.3
+	style 1
+	background "ui/assets/hud/bteambgr.tga"
+	ownerdrawflag CG_SHOW_BLUE_TEAM_HAS_REDFLAG
+	}
+	//blue team info
+	
+	//clan arena count
+	itemDef {
+		name "clanArena"
+		rect 33 2 21 11
+		visible 1
+		backcolor 1 1 1 1
+		decoration	
+		style 1
+	    ownerdrawflag CG_SHOW_CLAN_ARENA
+		background "ui/assets/score/ca_score_blu.tga"
+	}
+    	itemdef {
+	    name "blueClanPlayers"
+	    ownerdrawflag CG_SHOW_CLAN_ARENA
+	    ownerdraw CG_BLUE_CLAN_PLYRS  
+   	    rect 45 11 136 40
+   	    visible 1
+	    textscale .18
+	    forecolor 1 1 1 0.65
+	    decoration
+	}	
+	itemDef {
+		name "f"
+		rect 36 1 13 13
+		visible 1
+		bordercolor 1 1 1 .75
+		decoration	
+		style 3
+		ownerdrawflag CG_SHOW_HARVESTER                 
+		background "icons/skull_blue.tga"
+	}
+	itemDef {
+		name "blueflag"
+		rect 36 1 13 13
+		visible 1
+		decoration    
+		ownerdrawflag CG_SHOW_CTF                    	
+		ownerdraw CG_BLUE_FLAGSTATUS
+	}
+	itemDef {
+		name "oneflagstatus"
+		rect 36 1 13 13
+		visible 1
+		decoration                	
+		ownerdraw CG_ONEFLAG_STATUS 
+	}
+}
+// BLUE TEAM BAR BOTTOM
+menuDef {
+    	name "BlueFrameTeam"
+    	fullScreen MENU_FALSE
+    	visible MENU_TRUE	
+    	rect 2 24 32 256
+    	ownerdrawflag CG_SHOW_IF_RED_IS_FIRST_PLACE// AND CG_SHOW_ANYNONTEAMGAME
+	//blue team flag alert - align to left
+	itemDef {
+     	name "TeamBLeft"
+	rect 31 0 128 16 
+	visible 1
+   	decoration
+	backcolor 0.25 0.25 1 0.3
+	style 1
+	background "ui/assets/hud/bteambgl.tga"
+	ownerdrawflag CG_SHOW_BLUE_TEAM_HAS_REDFLAG
+	}
+	//blue team flag alert - align to right
+	itemDef {
+     	name "TeamBLeft"
+	rect 51 0 128 16 
+	visible 1
+   	decoration
+	backcolor 0.25 0.25 1 0.3
+	style 1
+	background "ui/assets/hud/bteambgr.tga"
+	ownerdrawflag CG_SHOW_BLUE_TEAM_HAS_REDFLAG
+	}
+	//blue team info
+
+	//clan arena count
+	itemDef {
+		name "clanArena"
+		rect 33 2 21 11
+		visible 1
+		backcolor 1 1 1 1
+		decoration	
+		style 1
+	    ownerdrawflag CG_SHOW_CLAN_ARENA
+		background "ui/assets/score/ca_score_blu.tga"
+	}
+    	itemdef {
+	    name "blueClanPlayers"
+	    ownerdrawflag CG_SHOW_CLAN_ARENA
+	    ownerdraw CG_BLUE_CLAN_PLYRS  
+   	    rect 45 11 136 40
+   	    visible 1
+	    textscale .18
+	    forecolor 1 1 1 0.65
+	    decoration
+	}
+	itemDef {
+		name "f"
+		rect 36 1 13 13
+		visible 1
+		bordercolor 1 1 1 .75
+		decoration	
+		style 3
+		ownerdrawflag CG_SHOW_HARVESTER                 
+		background "icons/skull_blue.tga"
+	}
+	itemDef {
+		name "blueflag"
+		rect 36 1 13 13
+		visible 1
+		decoration    
+		ownerdrawflag CG_SHOW_CTF                    	
+		ownerdraw CG_BLUE_FLAGSTATUS
+	}
+	itemDef {
+		name "oneflagstatus"
+		rect 36 1 13 13
+		visible 1
+		decoration                	
+		ownerdraw CG_ONEFLAG_STATUS 
+	}
+}
+
+// DM/TOURNAMENT BAR
+menuDef {
+    	name "SelfFrameHighlights"
+    	fullScreen MENU_FALSE
+    	visible MENU_TRUE	
+    	rect 2 7 32 256
+    	//ownerdrawflag CG_SHOW_ANYNONTEAMGAME
+	//self top highlight
+	itemDef {
+     	name "SelfTLeft"
+	rect 32 0 16 16 
+	visible 1
+   	decoration
+	ownerdraw CG_TEAM_COLORIZED
+	ownerdrawflag CG_SHOW_IF_PLYR_IS_FIRST_PLACE
+	style 1
+	background "ui/assets/hud/teamonl.tga"
+	}
+	itemDef {
+     	name "SelfTMid"
+	rect 48 0 115 16 
+	visible 1
+   	decoration
+	ownerdraw CG_TEAM_COLORIZED
+	ownerdrawflag CG_SHOW_IF_PLYR_IS_FIRST_PLACE
+	style 1
+	background "ui/assets/hud/teamonm.tga"
+	}
+	itemDef {
+     	name "SelfTLeft"
+	rect 163 0 16 16 
+	visible 1
+   	decoration
+	ownerdraw CG_TEAM_COLORIZED
+	ownerdrawflag CG_SHOW_IF_PLYR_IS_FIRST_PLACE
+	style 1
+	background "ui/assets/hud/teamonr.tga"
+	}
+	//self bottom highlight
+	itemDef {
+     	name "SelfBLeft"
+	rect 32 17 16 16 
+	visible 1
+   	decoration
+	ownerdraw CG_TEAM_COLORIZED
+	ownerdrawflag CG_SHOW_IF_PLYR_IS_NOT_FIRST_PLACE
+	style 1
+	background "ui/assets/hud/teamonl.tga"
+	}
+	itemDef {
+     	name "SelfBMid"
+	rect 48 17 115 16 
+	visible 1
+   	decoration
+	ownerdraw CG_TEAM_COLORIZED
+	ownerdrawflag CG_SHOW_IF_PLYR_IS_NOT_FIRST_PLACE
+	style 1
+	background "ui/assets/hud/teamonm.tga"
+	}
+	itemDef {
+     	name "SelfBLeft"
+	rect 163 17 16 16 
+	visible 1
+   	decoration
+	ownerdraw CG_TEAM_COLORIZED
+	ownerdrawflag CG_SHOW_IF_PLYR_IS_NOT_FIRST_PLACE
+	style 1
+	background "ui/assets/hud/teamonr.tga"
+	}
+}
+
+// example for PAT
+// this is the item def for the 1st place text
+menuDef {
+    	name "scores"
+    	fullScreen MENU_FALSE
+    	visible MENU_TRUE	
+    	rect 40 0 120 40
+    itemdef {
+	    name "1stplace"
+	    ownerdraw CG_1ST_PLACE_SCORE
+   	    rect 0 19 136 40
+	backcolor 1 1 1 1
+	forecolor 1 1 1 1
+   	    visible 1
+		textscale .22
+	    decoration
+	}
+
+// example for PAT
+// this is the item def for the 2nd place text
+
+    itemdef {
+	    name "2ndplace"
+	    ownerdraw CG_2ND_PLACE_SCORE
+   	    rect 0 36 136 40
+   	    visible 1
+		textscale .22
+	    decoration
+	}
+}
+// you can use "ownerdrawflag CG_SHOW_IF_PLYR_IS_FIRST_PLACE"
+// or 	"ownerdrawflag CG_SHOW_IF_PLYR_IS_NOT_FIRST_PLACE" to toggle the
+// score highlight on / off for the first and second place score boxes
+
+//*****Player Pickups*****//
+//powerup
+//FIX - THIS NUMBER IS HUGE NEEDS TO BE SMALLER, seeing weird vertical stretching as well
+menuDef {
+	name "powerup"
+	fullScreen MENU_FALSE
+	visible MENU_TRUE
+	rect 570 220 50 80
+
+	itemDef {
+	name "powerupArea"
+	rect 0 0 35 35
+    	visible 1
+	decoration
+	ownerdraw CG_AREA_POWERUP
+	special 4			// spacing
+	align HUD_VERTICAL
+	}
+}
+//useable pickups
+menuDef {
+    	DEFAULTS_MENU
+	name "pickups"
+    	rect 520 452 385 32
+
+	itemDef {
+      	DEFAULTS_ITEM
+	name "CTFPOWERUP"
+	rect 90 0 25 25
+	ownerdraw CG_CTF_POWERUP
+	//ownerdraw CG_PLAYER_ITEM
+	}
+}
+
+//	graphical obits	
+menuDef {
+	name "obit area"
+	fullScreen MENU_FALSE
+	visible MENU_TRUE
+	rect 10 62 65 12
+
+    itemdef {
+	    name hudObit
+	    ownerdraw CG_PLAYER_OBIT
+   	    rect 0 0 65 12
+   	    visible 1
+	    decoration
+	    textscale .22
+	}
+}
+
+//	chat area	
+menuDef {
+	name "chat area"
+	fullScreen MENU_FALSE
+	visible MENU_TRUE
+	rect 0 0 32 256
+
+	//chatbgLeft
+	itemDef {
+		name "chatBgLeft"
+		rect 3 345 16 64 
+		visible 1
+		ownerdrawflag CG_SHOW_IF_CHAT_VISIBLE
+		decoration
+		backcolor 0 0 0 0.5
+		style 1
+		background "ui/assets/hud/chatl.tga"
+	}
+	//chatbgMid
+	itemDef {
+		name "chatBgLeft"
+		rect 19 345 601 64 
+		visible 1
+		ownerdrawflag CG_SHOW_IF_CHAT_VISIBLE
+		decoration
+		backcolor 0 0 0 0.5
+		style 1
+		background "ui/assets/hud/chatm.tga"
+	}
+	//chatbgRight
+	itemDef {
+		name "chatBgLeft"
+		rect 620 345 16 64 
+		visible 1
+		ownerdrawflag CG_SHOW_IF_CHAT_VISIBLE
+		decoration
+		backcolor 0 0 0 0.5
+		style 1
+		background "ui/assets/hud/chatr.tga"
+	}
+    itemdef {
+	    name "chatWindow"
+	    ownerdraw CG_AREA_NEW_CHAT
+   	    rect 5 287 634 120
+   	    visible 1
+	    decoration
+	}
+}
+
+}

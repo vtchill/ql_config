@@ -1,0 +1,71 @@
+#include "ui/menudef.h"
+
+
+menuDef {
+	name "fullscreencrosshair"
+	fullScreen MENU_FALSE
+	visible MENU_TRUE
+	rect 0 0 640 480
+		
+	//heavy LEFT horiz
+	itemDef {
+		name "horizontalhair"
+		visible 1
+		rect 260 238.5 50 480
+		border WINDOW_BORDER_HORZ
+		bordersize 1
+		bordercolor 1 1 1 0.2
+	}
+	
+	//heavy RIGHT horiz
+	itemDef {
+		name "horizontalhair"
+		visible 1
+		rect 328 238.5 50 480
+		border WINDOW_BORDER_HORZ
+		bordersize 1
+		bordercolor 1 1 1 0.2
+}
+
+	//heavy TOP vert
+	itemDef {
+		name "verticalhair_top"
+		visible 1
+		rect 318.5 180 640 50
+		border WINDOW_BORDER_VERT
+		bordersize 1
+		bordercolor 1 1 1 0.2
+}
+	
+	//heavy BOTTOM vert
+	itemDef {
+		name "verticalhair_top"
+		visible 1
+		rect 318.5 248 640 50
+		border WINDOW_BORDER_VERT
+		bordersize 1
+		bordercolor 1 1 1 0.2
+}		
+
+
+	//vert split
+		itemDef {
+		name "verticalhair_top"
+		visible 1
+		rect 318.5 0 640 480
+		border WINDOW_BORDER_VERT
+		bordersize 1
+		bordercolor 0 0 0 0.1
+	}	
+
+	//horiz split
+	itemDef {
+		name "horizontalhair"
+		visible 1
+		rect 0 238.5 640 480
+		border WINDOW_BORDER_HORZ
+		bordersize 1
+		bordercolor 0 0 0 0.1
+	}
+
+}

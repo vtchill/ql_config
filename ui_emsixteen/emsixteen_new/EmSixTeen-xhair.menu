@@ -1,0 +1,195 @@
+#include "ui/menudef.h"
+
+//bright cross
+//*****STRONGCROSSHAIR1*****//
+// menuDef {
+// name "strongcrosshair1"
+// fullScreen MENU_FALSE
+// visible MENU_TRUE
+// rect 309.5 229.5 32 32
+// itemdef {
+// name gotMsg
+// rect 0 0 21 21
+// style 1
+// background "/gfx/2d/crosshairb.tga"
+// backcolor 1 1 1 1
+// visible 1
+// decoration
+// }
+// }
+
+// dot yakumo
+//*****STRONGDOT*****//
+menuDef {
+name "strongcrosshair1"
+fullScreen MENU_FALSE
+visible MENU_TRUE
+rect 319.5 239 0 0
+itemdef {
+name gotMsg
+rect 0 0 1 1
+style 1
+//background "/gfx/2d/crosshairb.tga"
+backcolor 1 1 1 1
+visible 1
+decoration
+backcolor 1 0 0 1
+}
+}
+
+//ring 1
+//*****STRONGCROSSHAIR2*****//
+// menuDef {
+// name "strongcrosshair2"
+// fullScreen MENU_FALSE
+// visible MENU_TRUE
+// rect 316.5 236.5 32 32
+// itemdef {
+// name gotMsg
+// rect 0 0 7 7
+// style 1
+// background "/gfx/2d/crosshaira.tga"
+// backcolor 1 1 1 1
+// visible 1
+// decoration
+// }
+// }
+
+
+//ring 2
+//*****STRONGCROSSHAIR3*****//
+// menuDef {
+// name "strongcrosshair3"
+// fullScreen MENU_FALSE
+// visible MENU_TRUE
+// rect 316 236 32 32
+// itemdef {
+// name gotMsg
+// rect 0 0 8 8
+// style 1
+// background "/gfx/2d/crosshaira.tga"
+// backcolor 1 1 1 1
+// visible 1
+// decoration
+// }
+// }
+
+//ring 3
+//*****STRONGCROSSHAIR4*****//
+// menuDef {
+// name "strongcrosshair4"
+// fullScreen MENU_FALSE
+// visible MENU_TRUE
+// rect 316 236 32 32
+// itemdef {
+// name gotMsg
+// rect 0 0 8 8
+// style 1
+// background "/gfx/2d/crosshaira.tga"
+// backcolor 1 1 1 1
+// visible 1
+// decoration
+// }
+// }
+
+//ring 5
+//*****STRONGCROSSHAIR5*****//
+// menuDef {
+// name "strongcrosshair5"
+// fullScreen MENU_FALSE
+// visible MENU_TRUE
+// rect 316.5 236.5 32 32
+// itemdef {
+// name gotMsg
+// rect 0 0 7 7
+// style 1
+// background "/gfx/2d/crosshaira.tga"
+// backcolor 1 1 1 1
+// visible 1
+// decoration
+// }
+// }
+
+//ring 6
+//*****STRONGCROSSHAIR6*****//
+// menuDef {
+// name "strongcrosshair6"
+// fullScreen MENU_FALSE
+// visible MENU_TRUE
+// rect 316.5 236.5 32 32
+// itemdef {
+// name gotMsg
+// rect 0 0 7 7
+// style 1
+// background "/gfx/2d/crosshaira.tga"
+// backcolor 1 1 1 1
+// visible 1
+// decoration
+// }
+// }
+
+
+menuDef {
+	name "fullscreencrosshair"
+	fullScreen MENU_FALSE
+	visible MENU_TRUE
+	rect 0 0 640 480
+		
+	itemDef {
+		name "horizontalhair"
+		visible 1
+		rect 260 237.85 50 480
+		border WINDOW_BORDER_HORZ
+		bordersize 1
+		bordercolor 1 1 1 0.25
+	}
+	
+		
+	itemDef {
+		name "horizontalhair"
+		visible 1
+		rect 328 237.85 50 480
+		border WINDOW_BORDER_HORZ
+		bordersize 1
+		bordercolor 1 1 1 0.25
+}
+
+
+	itemDef {
+		name "verticalhair_top"
+		visible 1
+		rect 318.40 180 640 50
+		border WINDOW_BORDER_VERT
+		bordersize 1
+		bordercolor 1 1 1 0.25
+}
+	
+	itemDef {
+		name "verticalhair_top"
+		visible 1
+		rect 318.40 248 640 50
+		border WINDOW_BORDER_VERT
+		bordersize 1
+		bordercolor 1 1 1 0.25
+}		
+
+	itemDef {
+		name "verticalhair_top"
+		visible 1
+		rect 318.40 0 640 480
+		border WINDOW_BORDER_VERT
+		bordersize 1
+		bordercolor 1 1 1 0.1
+	}	
+
+
+	itemDef {
+		name "horizontalhair"
+		visible 1
+		rect 0 237.85 640 480
+		border WINDOW_BORDER_HORZ
+		bordersize 1
+		bordercolor 1 1 1 0.1
+	}
+
+}

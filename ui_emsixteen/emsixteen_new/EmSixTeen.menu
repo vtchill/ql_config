@@ -1,0 +1,2054 @@
+/*
+EmSixTeen's Custom HUD - 14th August 2009
+
+Completely re-written to be easier to read, understand and edit.
+
+Newest version always @ 	http://sites.google.com/site/emsixteen/
+			http://qlhud.core.ws/user/EmSixTeen/
+
+rect 		horpos vertpos horsize vertsize
+others 		r g b transparency
+addColorRange 	lowvalue highvalue r g b transparency
+textstyle 	1 = blinking, 2 = without shadow, 3 = with shadow, 6 = double shadow
+
+Proper guides:
+http://rfactory.org/hud.html
+http://quakelivehud.blogspot.com
+
+Props to Borgondio, injx, Rroff, RAZ3R, focus team, anyone else I've noseyed at/talked to, and whoever uses this..
+*/
+
+#include "ui/menudef.h"
+
+// Using #define is like using a shortcut, and if you edit it here, it'll change wherever you use it
+
+#define	DEFAULTS_ITEM	decoration visible 1
+#define	DEFAULTS_MENU	visible 1
+
+#define 	vitalsBIG	1
+#define	vitalsSMALL	0.4
+
+#define	COLOUR_RED 	1 0 0
+#define	COLOUR_BLUE 	0 0 1
+#define	COLOUR_TEAM 	0.4 0.4 0.4
+#define	COLOUR_ENEMY	0 1 0
+			
+#define	COLOUR_CRITICAL	1 0 0				// Red
+#define	COLOUR_LOW	0.8 0.5 0			// Gold
+#define	COLOUR_HEALTHY	1 1 1				// White
+#define	COLOUR_STACKED	0.37 0.8 1			// Light blue
+
+#define	LEFTALIGN	textalign ITEM_ALIGN_LEFT
+#define	CENTERALIGN	textalign ITEM_ALIGN_CENTER
+#define	RIGHTALIGN	textalign ITEM_ALIGN_RIGHT
+
+#define	NORMALTEXT	textstyle 0
+#define	DROPSHADOWTEXT	textstyle 3
+#define	HEAVYSHADOWTEXT	textstyle 6
+
+// ********** SPEED-O //
+
+        menuDef {
+                name "Speedo-meter"
+                rect 310 340 50 10
+                visible MENU_TRUE  //set to true to use this
+                itemDef {
+                        ownerDraw CG_SPEEDOMETER
+                        visible MENU_TRUE
+                       textalign ITEM_ALIGN_CENTER
+					   forecolor 1 1 1 0.3
+					   textscale 0.2
+	            }
+
+        }
+
+// ********** PLAYER VITALS //
+
+menuDef {
+    	fullScreen MENU_FALSE
+    	visible MENU_TRUE
+    	rect 0 0 640 480
+	
+// ********** HEALTH //
+
+// Health icon
+
+	itemDef {
+		DEFAULTS_ITEM
+	     	rect 296 444 22 22
+		backcolor 0 0 0 0.8
+		style 1
+		background "ui/assets/hud/health.tga"
+	}
+	
+	itemDef {
+	     	DEFAULTS_ITEM
+		rect 295 443 22 22
+		ownerdraw CG_TEAM_COLORIZED
+		style 1
+		background "ui/assets/hud/health.tga"
+	}
+
+// Health value 
+
+	// Should be right aligned, but game code needs fixed
+	itemDef {
+		DEFAULTS_ITEM
+		rect 210 450 63 22
+		ownerdraw CG_PLAYER_HEALTH
+		HEAVYSHADOWTEXT
+		RIGHTALIGN
+		textscale vitalsBIG
+		forecolor COLOUR_STACKED 1			// COLOUR_STACKED when >150
+		addColorRange -999 30 COLOUR_CRITICAL 1	// COLOUR_CRITICAL from -999 to 30 (30 = max quad PJ dmg)
+		addColorRange 31 80 COLOUR_LOW 1		// COLOUR_LOW from 31 to 80 (80 = rg dmg)
+		addColorRange 81 150 COLOUR_HEALTHY 1	// COLOUR_HEALTHY from 81 to 150
+	}
+	
+// ********** ARMOUR //
+
+// Armour icon
+
+	itemDef {	
+		DEFAULTS_ITEM
+		rect 324 444 24 22
+	     	backcolor 0 0 0 0.8
+		style 1
+		background "ui/assets/hud/armor.tga"
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 323 443 24 22
+		ownerdraw CG_TEAM_COLORIZED
+		style 1
+		background "ui/assets/hud/armor.tga"
+	}
+	
+// Armour value
+
+	// Should be left aligned, but game code needs fixed
+	itemDef {
+		DEFAULTS_ITEM
+		rect 370 450 63 22
+		ownerdraw CG_PLAYER_ARMOR_VALUE
+		HEAVYSHADOWTEXT
+		LEFTALIGN
+		textscale 1
+		forecolor COLOUR_STACKED 1			// COLOUR_STACKED when >150
+		addColorRange -999 0 1 1 1 0		// Hidden when 0 or less
+		addColorRange 1 30 COLOUR_CRITICAL 1	// COLOUR_CRITICAL from 1 to 30
+	   	addColorRange 31 80 COLOUR_LOW 1		// COLOUR_LOW from 31 to 80
+		addColorRange 81 150 COLOUR_HEALTHY	1	// COLOUR_HEALTHY from 81 to 150
+	}
+	
+// ********** AMMO //
+
+	itemDef {
+		name "Ammo icon"
+		DEFAULTS_ITEM
+		rect 314 380 12 12
+		ownerdraw CG_PLAYER_AMMO_ICON2D		// CG_PLAYER_AMMO_ICON for 3D icon
+	}
+
+	itemDef {
+		name "Ammo value"
+		DEFAULTS_ITEM
+	 	rect 290 400 62 12
+		DROPSHADOWTEXT
+		CENTERALIGN
+		textscale vitalsSMALL
+		forecolor COLOUR_HEALTHY 1
+		ownerdraw CG_PLAYER_AMMO_VALUE
+		addColorRange -999 5 COLOUR_CRITICAL 1	// COLOUR_CRITICAL when 5 ammo or lower
+		}
+}
+
+// ********** FLAG  //
+
+menuDef {
+	DEFAULTS_MENU
+    	rect 0 0 640 480
+
+	itemDef {
+		name "Pulsating flag carrier icon"
+		DEFAULTS_ITEM
+		rect 295 348 50 71
+		style 3
+		background "ui/assets/hud/flag"
+		ownerdrawflag CG_SHOW_IF_PLAYER_HAS_FLAG            
+	}
+
+	itemDef {
+		name "Flag carrier flag model"
+		DEFAULTS_ITEM
+		rect 309 354 22 22
+		style 1
+		ownerdraw CG_PLAYER_HASFLAG2D 
+	}
+
+}
+
+// ********** TIMER //
+
+menuDef	{
+	DEFAULTS_MENU
+
+	itemDef {
+		name "Team game clock"
+		DEFAULTS_ITEM
+		RIGHTALIGN
+		style 0
+		rect 560 135 80 50
+		DROPSHADOWTEXT
+		forecolor 1 1 1 0.5
+		textscale .65
+		ownerdraw CG_LEVELTIMER
+		ownerdrawflag CG_SHOW_ANYTEAMGAME
+	}
+
+	itemDef {
+		name "Solo game clock"
+		DEFAULTS_ITEM
+		RIGHTALIGN
+		style 0
+		rect 295 25 50 15
+		DROPSHADOWTEXT
+		forecolor 1 1 1 0.5
+		textscale .65
+		ownerdraw CG_LEVELTIMER
+		ownerdrawflag CG_SHOW_ANYNONTEAMGAME
+	}
+	
+}
+
+// ********** OBITUARIES //
+
+menuDef {
+	DEFAULTS_MENU
+	rect 6 15 160 32
+
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdraw CG_PLAYER_OBIT
+		ownerdrawflag CG_SHOW_ANYNONTEAMGAME
+		rect 45 320 160 32
+		textscale .2
+		DROPSHADOWTEXT
+	}
+
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdraw CG_PLAYER_OBIT
+		ownerdrawflag CG_SHOW_CLAN_ARENA
+		//rect 45 0 160 32
+		rect 45 320 160 32
+		textscale .2
+		DROPSHADOWTEXT
+	}
+
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdraw CG_PLAYER_OBIT
+		ownerdrawFlag CG_SHOW_CTF
+		//rect 71 0 160 32
+		rect 45 320 160 32
+		textscale 0.2
+		DROPSHADOWTEXT
+	}
+
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdraw CG_PLAYER_OBIT
+		cvarTest "g_gametype"
+		showCvar { "3" }
+		//rect 45 0 160 32
+		rect 45 320 160 32
+		textscale 0.2
+		DROPSHADOWTEXT
+	}
+
+}
+
+// ********** SCORES //
+
+// Duel and FFA scores
+
+menuDef {
+	DEFAULTS_MENU
+	rect 0 0 60 60
+	ownerdrawflag CG_SHOW_ANYNONTEAMGAME
+
+	itemDef {
+		name "Your score"
+		DEFAULTS_ITEM
+		ownerdraw CG_PLAYER_SCORE
+		ownerdrawFlag CG_SHOW_IF_PLYR_IS_FIRST_PLACE
+		rect 4 -4 32 20
+		textscale .3
+		DROPSHADOWTEXT
+	}
+
+	itemDef {
+		name "2nd place score"
+		DEFAULTS_ITEM
+		ownerdraw CG_BLUE_SCORE
+		ownerdrawFlag CG_SHOW_IF_PLYR_IS_FIRST_PLACE
+		rect -6 16 32 20
+		textscale .3
+		DROPSHADOWTEXT
+	}
+	
+	itemDef {
+		name "Your score box colour"
+		DEFAULTS_ITEM
+		rect 0 0 32 20
+		backcolor COLOUR_TEAM 0.2
+		style WINDOW_STYLE_FILLED
+		ownerdrawFlag CG_SHOW_IF_PLYR_IS_FIRST_PLACE
+	}
+	
+	itemDef {
+		name "2nd place score box colour"
+		DEFAULTS_ITEM
+		rect 0 20 32 20
+		backcolor COLOUR_ENEMY 0.2
+		style WINDOW_STYLE_FILLED
+		ownerdrawFlag CG_SHOW_IF_PLYR_IS_FIRST_PLACE
+	}
+	
+	itemDef {
+		name "1st place score"
+		DEFAULTS_ITEM
+		ownerdraw CG_RED_SCORE //higher
+		ownerdrawFlag CG_SHOW_IF_PLYR_IS_NOT_FIRST_PLACE
+		rect -6 -4 32 20
+		textscale .3
+		DROPSHADOWTEXT
+	}
+
+	itemDef {
+		name "Your score"
+		DEFAULTS_ITEM
+		ownerdraw CG_PLAYER_SCORE
+		ownerdrawFlag CG_SHOW_IF_PLYR_IS_NOT_FIRST_PLACE
+		rect 4 16 32 20
+		textscale .3
+		DROPSHADOWTEXT
+	}
+	
+	itemDef {
+		name "1st place score box colour"
+		DEFAULTS_ITEM
+		rect 0 0 32 20
+		backcolor COLOUR_ENEMY 0.2
+		style WINDOW_STYLE_FILLED
+		ownerdrawFlag CG_SHOW_IF_PLYR_IS_NOT_FIRST_PLACE
+	}
+	
+	itemDef {
+		name "Your score box colour"
+		DEFAULTS_ITEM
+		rect 0 20 32 20
+		backcolor COLOUR_TEAM 0.2
+		style WINDOW_STYLE_FILLED
+		ownerdrawFlag CG_SHOW_IF_PLYR_IS_NOT_FIRST_PLACE
+	}
+	
+}
+
+// Team scores (Red Team)
+
+menuDef {
+	DEFAULTS_MENU
+	rect 0 0 60 60
+	ownerdrawFlag CG_SHOW_IF_PLYR_IS_ON_RED
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 0 0 44 20
+		ownerdrawFlag CG_SHOW_ANYTEAMGAME
+		backcolor COLOUR_RED 0.2
+		style WINDOW_STYLE_FILLED
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 0 20 44 20
+		ownerdrawFlag CG_SHOW_ANYTEAMGAME
+		backcolor COLOUR_ENEMY 0.2
+		style WINDOW_STYLE_FILLED
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 45 0 24 20
+		ownerdrawFlag CG_SHOW_CTF                       
+		ownerdraw CG_RED_FLAGSTATUS
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 45 20 24 20    
+		ownerdrawFlag CG_SHOW_CTF                    	
+		ownerdraw CG_BLUE_FLAGSTATUS
+	}
+
+	
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdraw CG_RED_SCORE
+		ownerdrawFlag CG_SHOW_ANYTEAMGAME
+		rect 10 -4 32 20
+		textscale 0.3
+		RIGHTALIGN
+		DROPSHADOWTEXT
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdraw CG_BLUE_SCORE
+		ownerdrawFlag CG_SHOW_ANYTEAMGAME
+		rect 10 16 32 20
+		textscale 0.3
+		RIGHTALIGN
+		DROPSHADOWTEXT
+	}
+}
+
+// Team scores (Blue Team)
+
+menuDef {
+	DEFAULTS_MENU
+	rect 0 0 60 60
+	ownerdrawFlag CG_SHOW_IF_PLYR_IS_ON_BLUE
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 0 0 44 20
+		ownerdrawFlag CG_SHOW_ANYTEAMGAME
+		backcolor COLOUR_BLUE 0.2
+		style WINDOW_STYLE_FILLED
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 0 20 44 20
+		ownerdrawFlag CG_SHOW_ANYTEAMGAME
+		backcolor COLOUR_ENEMY 0.2
+		style WINDOW_STYLE_FILLED
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 45 0 24 20
+		ownerdrawFlag CG_SHOW_CTF                       
+		ownerdraw CG_BLUE_FLAGSTATUS
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 45 20 24 20    
+		ownerdrawFlag CG_SHOW_CTF                    	
+		ownerdraw CG_RED_FLAGSTATUS
+	}
+
+	
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdraw CG_BLUE_SCORE
+		ownerdrawFlag CG_SHOW_ANYTEAMGAME
+		rect 10 -4 32 20
+		textscale 0.3
+		RIGHTALIGN
+		DROPSHADOWTEXT
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdraw CG_RED_SCORE
+		ownerdrawFlag CG_SHOW_ANYTEAMGAME
+		rect 10 16 32 20
+		textscale 0.3
+		RIGHTALIGN
+		DROPSHADOWTEXT
+	}
+	
+}
+
+// CA Players left (Red Team)
+
+menuDef {
+	DEFAULTS_MENU
+	rect 0 40 60 60
+	ownerdrawFlag CG_SHOW_IF_PLYR_IS_ON_RED
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 8 0 36 16
+		backcolor COLOUR_RED 0.15
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		style WINDOW_STYLE_FILLED
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 8 16 36 16
+		backcolor COLOUR_ENEMY 0.15
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		style WINDOW_STYLE_FILLED
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 0 0 16 16	
+		style WINDOW_STYLE_SHADER
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		background "models/players/xaero/icon_red.png"
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 0 16 16 16	
+		style WINDOW_STYLE_SHADER
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		background "models/players/keel/icon_sport.png"
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		ownerdraw CG_RED_CLAN_PLYRS  
+		rect 31 13 32 16
+		RIGHTALIGN
+		textscale .24
+		DROPSHADOWTEXT
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		ownerdraw CG_BLUE_CLAN_PLYRS  
+		rect 31 29 136 40
+		RIGHTALIGN
+		textscale .24
+		DROPSHADOWTEXT
+	}
+	
+}
+
+// CA Players left (Blue Team)
+
+menuDef {
+	DEFAULTS_MENU
+	rect 0 40 60 60
+	ownerdrawFlag CG_SHOW_IF_PLYR_IS_ON_BLUE
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 8 0 36 16
+		backcolor COLOUR_BLUE 0.15
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		style WINDOW_STYLE_FILLED
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 8 16 36 16
+		backcolor COLOUR_ENEMY 0.15
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		style WINDOW_STYLE_FILLED
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 0 0 16 16	
+		style WINDOW_STYLE_SHADER
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		background "models/players/xaero/icon_blue.png"
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		rect 0 16 16 16	
+		style WINDOW_STYLE_SHADER
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		background "models/players/keel/icon_sport.png"
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		ownerdraw CG_BLUE_CLAN_PLYRS  
+		rect 22 13 32 16
+		RIGHTALIGN
+		textscale .26
+		DROPSHADOWTEXT
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		ownerdraw CG_RED_CLAN_PLYRS  
+		rect 22 29 136 40
+		RIGHTALIGN
+		textscale .26
+		DROPSHADOWTEXT
+	}
+	
+}
+
+// ********** AWARDS //
+
+menuDef {
+	DEFAULTS_MENU
+	rect 3 440 200 30
+		
+	itemDef {
+		DEFAULTS_ITEM
+		ownerdraw CG_ACCURACY
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		rect 5 0 20 20
+		background "ui/assets/medal_accuracy.tga"
+		forecolor 1 1 1 1
+		visible MENU_TRUE
+		textscale 0
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		name "medal_accuracy"
+		ownerdraw CG_ACCURACY
+		ownerdrawFlag CG_SHOW_CLAN_ARENA
+		rect 0 40 0 0
+		forecolor 1 1 1 1
+		visible MENU_TRUE
+		textscale 0.22
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		name "medal_accuracy"
+		ownerdraw CG_ACCURACY
+		cvarTest "g_gametype"
+		showCvar { "0" }
+		rect 5 0 20 20
+		background "ui/assets/medal_accuracy.tga"
+		forecolor 1 1 1 1
+		visible MENU_TRUE
+		textscale 0
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		name "medal_accuracy"
+		ownerdraw CG_ACCURACY
+		cvarTest "g_gametype"
+		showCvar { "0" }
+		rect 0 40 0 0
+		forecolor 1 1 1 1
+		visible MENU_TRUE
+		textscale 0.22
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		name "medal_captures"
+		ownerdraw CG_CAPTURES
+		ownerdrawflag CG_SHOW_CTF
+		rect 5 0 20 20
+		background "ui/assets/medal_capture.tga"
+		forecolor 1 1 1 1
+		textscale 0
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		name "medal_captures"
+		ownerdraw CG_CAPTURES
+		ownerdrawflag CG_SHOW_CTF
+		rect 7 40 0 0
+		forecolor 1 1 1 1
+		visible MENU_TRUE
+		textscale 0.22
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		name "medal_assists"
+		ownerdraw CG_ASSISTS
+		ownerdrawflag CG_SHOW_CTF
+		rect 30 0 20 20
+		background "ui/assets/medal_assist.tga"
+		forecolor 1 1 1 1
+		textscale 0
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		name "medal_assists"
+		ownerdraw CG_ASSISTS
+		ownerdrawflag CG_SHOW_CTF
+		rect 35 40 0 0
+		forecolor 1 1 1 1
+		textscale 0.22
+	}
+	
+		
+	itemDef {
+		DEFAULTS_ITEM
+		name "medal_captures"
+		ownerdraw CG_DEFEND
+		ownerdrawflag CG_SHOW_CTF
+		rect 58 40 0 0
+		forecolor 1 1 1 1
+		visible MENU_TRUE
+		textscale 0.22
+	}
+	
+	itemDef {
+		DEFAULTS_ITEM
+		name "medal_captures"
+		ownerdraw CG_DEFEND
+		ownerdrawflag CG_SHOW_CTF
+		rect 55 0 20 20
+		background "ui/assets/medal_defend.tga"
+		forecolor 1 1 1 1
+		textscale 0
+	}
+	
+}
+
+// ********** POWERUPS //
+
+// PowerUps (default)
+
+menuDef {
+	DEFAULTS_MENU
+	rect 556 178 74 156
+
+	itemDef {
+		DEFAULTS_ITEM
+		rect 0 0 39 26
+		textscale 0.73
+		textstyle ITEM_TEXTSTYLE_SHADOWEDMORE
+		//textalign ITEM_ALIGN_RIGHT
+		ownerdraw CG_AREA_POWERUP
+		special 0			// spacing
+		align HUD_VERTICAL
+	}
+}
+
+// Pickups and holdables
+
+menuDef {
+	DEFAULTS_MENU
+	rect 0 40 80 25
+
+	itemDef {
+		DEFAULTS_ITEM
+		rect 23 0 22 22
+		ownerdraw CG_PLAYER_ITEM
+	}
+
+	itemDef {
+		DEFAULTS_ITEM
+		rect 0 0 22 22
+		ownerdraw CG_CTF_POWERUP
+	}
+}
+
+// ********** CHAT //
+
+menuDef {
+	DEFAULTS_MENU
+	rect 0 0 32 256
+	
+	itemdef {
+		DEFAULTS_ITEM
+		ownerdraw CG_AREA_NEW_CHAT
+		rect 5 287 634 120
+	}
+}
+
+
+//******************************** Tier Level display in warmup
+
+
+menuDef {
+fullScreen MENU_FALSE
+visible MENU_TRUE
+ownerdrawflag CG_SHOW_IF_WARMUP
+rect 30 460 120 120
+itemDef {
+rect 370 -420 32 32
+textscale .25
+forecolor 1 0 0 1
+text "^7You are on a Tier ^21 ^7Server"
+ownerdrawflag CG_SHOW_IF_WARMUP
+cvartest "sv_skillrating"
+showcvar {1-2-3-4-5-6-7-8-9-10}
+}
+
+itemDef {
+rect 370 -420 32 32
+textscale .25
+forecolor 1 0 0 1
+text "^7You are on a Tier ^52 ^7Server"
+ownerdrawflag CG_SHOW_IF_WARMUP
+cvartest "sv_skillrating"
+showcvar {11-12-13-14-15-16-17-18-19-20-21-22-23-24-25-26-27-28-29-30-31-32-33-34-35-36-37-38-39-40-41-42}
+}
+itemDef {
+rect 370 -420 32 32
+textscale .25
+forecolor 1 0 0 1
+text "^7You are on a Tier ^53 ^7Server"
+ownerdrawflag CG_SHOW_IF_WARMUP
+cvartest "sv_skillrating"
+showcvar {43-44-45-46-47-48-49-50-51-52-53-54-55-56-57-58-59-60-61-62-63-64-65-66}
+}
+itemDef {
+rect 370 -420 32 32
+textscale .25
+forecolor 1 0 0 1
+text "^7You are on a Tier ^44 ^7Server"
+ownerdrawflag CG_SHOW_IF_WARMUP
+cvartest "sv_skillrating"
+showcvar {67-68-69-70-71-72-73-74-75-76-77-78-79-80-81-82-83-84-85-86-87-88-89}
+}
+itemDef {
+rect 370 -420 32 32
+textscale .25
+forecolor 1 0 0 1
+text "^7You are on a Tier ^15 ^7Server"
+ownerdrawflag CG_SHOW_IF_WARMUP
+cvartest "sv_skillrating"
+showcvar {90-91-92-93-94-95-96-97-98-99-100}
+}
+}
+
+
+
+
+//****************************************** SV_SKILLRATING on HUD during play ***********************
+
+
+menuDef {
+visible MENU_TRUE
+rect 5 280 1 1
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+//text "0"
+cvarTest "sv_skillrating"
+showCvar {"0"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "1"
+cvarTest "sv_skillrating"
+showCvar {"1"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "2"
+cvarTest "sv_skillrating"
+showCvar {"2"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "3"
+cvarTest "sv_skillrating"
+showCvar {"3"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "4"
+cvarTest "sv_skillrating"
+showCvar {"4"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "5"
+cvarTest "sv_skillrating"
+showCvar {"5"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "6"
+cvarTest "sv_skillrating"
+showCvar {"6"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "7"
+cvarTest "sv_skillrating"
+showCvar {"7"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "8"
+cvarTest "sv_skillrating"
+showCvar {"8"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "9"
+cvarTest "sv_skillrating"
+showCvar {"9"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "10"
+cvarTest "sv_skillrating"
+showCvar {"10"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "11"
+cvarTest "sv_skillrating"
+showCvar {"11"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "12"
+cvarTest "sv_skillrating"
+showCvar {"12"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "13"
+cvarTest "sv_skillrating"
+showCvar {"13"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "14"
+cvarTest "sv_skillrating"
+showCvar {"14"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "15"
+cvarTest "sv_skillrating"
+showCvar {"15"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "16"
+cvarTest "sv_skillrating"
+showCvar {"16"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "17"
+cvarTest "sv_skillrating"
+showCvar {"17"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "18"
+cvarTest "sv_skillrating"
+showCvar {"18"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "19"
+cvarTest "sv_skillrating"
+showCvar {"19"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "20"
+cvarTest "sv_skillrating"
+showCvar {"20"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "21"
+cvarTest "sv_skillrating"
+showCvar {"21"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "22"
+cvarTest "sv_skillrating"
+showCvar {"22"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "23"
+cvarTest "sv_skillrating"
+showCvar {"23"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "24"
+cvarTest "sv_skillrating"
+showCvar {"24"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "25"
+cvarTest "sv_skillrating"
+showCvar {"25"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "26"
+cvarTest "sv_skillrating"
+showCvar {"26"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "27"
+cvarTest "sv_skillrating"
+showCvar {"27"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "28"
+cvarTest "sv_skillrating"
+showCvar {"28"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "29"
+cvarTest "sv_skillrating"
+showCvar {"29"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "30"
+cvarTest "sv_skillrating"
+showCvar {"30"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "31"
+cvarTest "sv_skillrating"
+showCvar {"31"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "32"
+cvarTest "sv_skillrating"
+showCvar {"32"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "33"
+cvarTest "sv_skillrating"
+showCvar {"33"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "34"
+cvarTest "sv_skillrating"
+showCvar {"34"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "35"
+cvarTest "sv_skillrating"
+showCvar {"35"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "36"
+cvarTest "sv_skillrating"
+showCvar {"36"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "37"
+cvarTest "sv_skillrating"
+showCvar {"37"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "38"
+cvarTest "sv_skillrating"
+showCvar {"38"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "39"
+cvarTest "sv_skillrating"
+showCvar {"39"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "40"
+cvarTest "sv_skillrating"
+showCvar {"40"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "41"
+cvarTest "sv_skillrating"
+showCvar {"41"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "42"
+cvarTest "sv_skillrating"
+showCvar {"42"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "43"
+cvarTest "sv_skillrating"
+showCvar {"43"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "44"
+cvarTest "sv_skillrating"
+showCvar {"44"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "45"
+cvarTest "sv_skillrating"
+showCvar {"45"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "46"
+cvarTest "sv_skillrating"
+showCvar {"46"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "47"
+cvarTest "sv_skillrating"
+showCvar {"47"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "48"
+cvarTest "sv_skillrating"
+showCvar {"48"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "49"
+cvarTest "sv_skillrating"
+showCvar {"49"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "50"
+cvarTest "sv_skillrating"
+showCvar {"50"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "51"
+cvarTest "sv_skillrating"
+showCvar {"51"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "52"
+cvarTest "sv_skillrating"
+showCvar {"52"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "53"
+cvarTest "sv_skillrating"
+showCvar {"53"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "54"
+cvarTest "sv_skillrating"
+showCvar {"54"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "55"
+cvarTest "sv_skillrating"
+showCvar {"55"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "56"
+cvarTest "sv_skillrating"
+showCvar {"56"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "57"
+cvarTest "sv_skillrating"
+showCvar {"57"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "58"
+cvarTest "sv_skillrating"
+showCvar {"58"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "59"
+cvarTest "sv_skillrating"
+showCvar {"59"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "60"
+cvarTest "sv_skillrating"
+showCvar {"60"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "61"
+cvarTest "sv_skillrating"
+showCvar {"61"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "62"
+cvarTest "sv_skillrating"
+showCvar {"62"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "63"
+cvarTest "sv_skillrating"
+showCvar {"63"}
+
+}
+
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "64"
+cvarTest "sv_skillrating"
+showCvar {"64"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "65"
+cvarTest "sv_skillrating"
+showCvar {"65"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "66"
+cvarTest "sv_skillrating"
+showCvar {"66"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "67"
+cvarTest "sv_skillrating"
+showCvar {"67"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "68"
+cvarTest "sv_skillrating"
+showCvar {"68"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "69"
+cvarTest "sv_skillrating"
+showCvar {"69"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "70"
+cvarTest "sv_skillrating"
+showCvar {"70"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "71"
+cvarTest "sv_skillrating"
+showCvar {"71"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "72"
+cvarTest "sv_skillrating"
+showCvar {"72"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "73"
+cvarTest "sv_skillrating"
+showCvar {"73"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "74"
+cvarTest "sv_skillrating"
+showCvar {"74"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "75"
+cvarTest "sv_skillrating"
+showCvar {"75"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "76"
+cvarTest "sv_skillrating"
+showCvar {"76"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "77"
+cvarTest "sv_skillrating"
+showCvar {"77"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "78"
+cvarTest "sv_skillrating"
+showCvar {"78"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "79"
+cvarTest "sv_skillrating"
+showCvar {"79"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "80"
+cvarTest "sv_skillrating"
+showCvar {"80"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "81"
+cvarTest "sv_skillrating"
+showCvar {"81"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "82"
+cvarTest "sv_skillrating"
+showCvar {"82"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "83"
+cvarTest "sv_skillrating"
+showCvar {"83"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "84"
+cvarTest "sv_skillrating"
+showCvar {"84"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "85"
+cvarTest "sv_skillrating"
+showCvar {"85"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "86"
+cvarTest "sv_skillrating"
+showCvar {"86"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "87"
+cvarTest "sv_skillrating"
+showCvar {"87"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "88"
+cvarTest "sv_skillrating"
+showCvar {"88"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "89"
+cvarTest "sv_skillrating"
+showCvar {"89"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "90"
+cvarTest "sv_skillrating"
+showCvar {"90"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "91"
+cvarTest "sv_skillrating"
+showCvar {"91"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "92"
+cvarTest "sv_skillrating"
+showCvar {"92"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "93"
+cvarTest "sv_skillrating"
+showCvar {"93"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "94"
+cvarTest "sv_skillrating"
+showCvar {"94"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "95"
+cvarTest "sv_skillrating"
+showCvar {"95"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "96"
+cvarTest "sv_skillrating"
+showCvar {"96"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "97"
+cvarTest "sv_skillrating"
+showCvar {"97"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "98"
+cvarTest "sv_skillrating"
+showCvar {"98"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "99"
+cvarTest "sv_skillrating"
+showCvar {"99"}
+
+}
+
+itemDef {
+ 
+visible 1
+textstyle 2
+textscale .25
+forecolor 1 1 1 0.2
+text "100"
+cvarTest "sv_skillrating"
+showCvar {"100"}
+
+}
+
+}
