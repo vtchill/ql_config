@@ -1,0 +1,1 @@
+xcopy "*.cfg" "%userprofile%\AppData\LocalLow\id Software\quakelive\home\baseq3" /e /c /i /q /y
