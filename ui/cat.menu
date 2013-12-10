@@ -203,8 +203,8 @@ menuDef {
 menuDef	{
 	name "teamclock"
 	fullScreen MENU_FALSE
-	//visible MENU_TRUE
-	visible MENU_FALSE
+	visible MENU_TRUE
+	//visible MENU_FALSE
 	ownerdrawflag CG_SHOW_ANYTEAMGAME
 	rect 200 70 122 36
 
@@ -232,10 +232,10 @@ menuDef	{
 menuDef	{
 	name "soloclock"
 	fullScreen MENU_FALSE
-	//visible MENU_TRUE
-	visible MENU_FALSE
+	visible MENU_TRUE
+	//visible MENU_FALSE
 	ownerdrawflag CG_SHOW_ANYNONTEAMGAME
-	rect 295 60 122 36
+	rect 440 70 122 36
 	
 	itemDef {
 		DEFAULTS_ITEM
